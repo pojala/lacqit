@@ -63,7 +63,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			cq7ODarFVsOZ/kAvhlFNePJiVBTXMdlfdtoRL8TwkAQ=
+			OzeQ8cAjWe06XktU+1ptAlza7aSoHXA7QPzRn3lpfu8=
 			</data>
 		</dict>
 		<key>Headers/LXCList.h</key>
@@ -113,6 +113,20 @@
 			<key>hash2</key>
 			<data>
 			Sgp0C3+Hy6mJ7PC/n59Ow6Fl9/y5R0EnKdCHjIeaVS4=
+			</data>
+		</dict>
+		<key>Headers/LXDrawContext_Impl.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6IfC+VdojE5e0T37DPJhkiJVSMt/zw88mCp2i6lQH6Q=
+			</data>
+		</dict>
+		<key>Headers/LXDraw_Impl.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9rijaYSIEn8PQlsRNOWX5vsjPNUybSjK9hdlQ8HjL9k=
 			</data>
 		</dict>
 		<key>Headers/LXFPClosure.h</key>
@@ -234,6 +248,13 @@
 			gTk8LmopECo5Y1hYNBm8dL33kd2enRiDNDlzIkrkgNA=
 			</data>
 		</dict>
+		<key>Headers/LXRef_Impl.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			kb6cCtK+l0ZIuFaP0BCD0SeCFHO8puZPb3f6Eytb/48=
+			</data>
+		</dict>
 		<key>Headers/LXShader.h</key>
 		<dict>
 			<key>hash2</key>
@@ -253,6 +274,13 @@
 			<key>hash2</key>
 			<data>
 			1hkGE6JAjA6r68ED3tN8fTLmm9NZnwqQul+YAzsSM4Q=
+			</data>
+		</dict>
+		<key>Headers/LXShader_Impl.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			miE+8uzwyATyKS6wIs0c4vXCct5hzzTJnQqOQJLUj4w=
 			</data>
 		</dict>
 		<key>Headers/LXStringUtils.h</key>

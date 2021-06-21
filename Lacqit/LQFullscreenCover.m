@@ -31,6 +31,7 @@
     [fsWin setLevel:NSFloatingWindowLevel];
     [fsWin setOpaque:opacity < 0.99 ? NO : YES];
     [fsWin setAlphaValue:opacity];
+    fsWin.backgroundColor = NSColor.clearColor;
 
     NSView *cview = [fsWin contentView];
     NSAssert(cview, @"no window contentview");

@@ -81,6 +81,7 @@ static BOOL isOSLeopard()
         [self setLevel:NSFloatingWindowLevel]; //NSPopUpMenuWindowLevel];
         [self setHidesOnDeactivate:YES];
         [self setMinSize:NSMakeSize(150, 120)];
+        self.backgroundColor = NSColor.clearColor;
     
         if (isOSLeopard()) {
             // only use a shadow on Leopard, because Leopard's lightweight and large shadows are prettier for floater windows

@@ -883,8 +883,23 @@ static void resolveHSV(CGFloat *color1, CGFloat *color2);
 #pragma mark -
 
 
+static void releaseCallback(void *info) {
+    if ( !info) return;
+
+    LQGradient *grad = (LQGradient *)info;
+    [grad release];
+    
+    NSLog(@"%s", __func__);
+}
+
 
 #pragma mark Private Methods
+
+- (LQGradientElementPtr)_elementListFirstItem
+{
+    return _elementList;
+}
+
 - (void)setBlendingMode:(LQGradientBlendingMode)mode;
   {
   _blendingMode = mode;
@@ -906,13 +921,15 @@ static void resolveHSV(CGFloat *color1, CGFloat *color2);
   if(_gradientFunction != NULL)
 	  CGFunctionRelease(_gradientFunction);
     
-  CGFunctionCallbacks evaluationCallbackInfo = {0 , evaluationFunction, NULL};	//Version, evaluator function, cleanup function
+      CGFunctionCallbacks evaluationCallbackInfo = {0 , evaluationFunction, releaseCallback};	//Version, evaluator function, cleanup function
   
-  static const CGFloat input_value_range   [2] = { 0, 1 };						//range  for the evaluator input
-  static const CGFloat output_value_ranges [8] = { 0, 1, 0, 1, 0, 1, 0, 1 };		//ranges for the evaluator output (4 returned values)
+      static const CGFloat input_value_range   [2] = { 0, 1 };						//range  for the evaluator input
+      static const CGFloat output_value_ranges [8] = { 0, 1, 0, 1, 0, 1, 0, 1 };		//ranges for the evaluator output (4 returned values)
+          
+      LQGradient *mySelf = [self retain]; // released by releaseCallback
   
-  _gradientFunction = CGFunctionCreate(&_elementList,					//the two transition colors
-									  1, input_value_range  ,		//number of inputs (just fraction of progression)
+      _gradientFunction = CGFunctionCreate(mySelf,					//provides the two transition colors
+									  1, input_value_range,		//number of inputs (just fraction of progression)
 									  4, output_value_ranges,		//number of outputs (4 - RGBa)
 									  &evaluationCallbackInfo);		//info for using the evaluator function
 #endif
@@ -926,7 +943,7 @@ static void resolveHSV(CGFloat *color1, CGFloat *color2);
 	LQGradientElement *tmpNext = _elementList;
 	_elementList = _lx_malloc(sizeof(LQGradientElement));
 	*_elementList = *newElement;
-	_elementList->nextElement = tmpNext;
+    _elementList->nextElement = tmpNext;
 	}
   else																		//inserting somewhere inside list
 	{
@@ -1063,15 +1080,18 @@ static void resolveHSV(CGFloat *color1, CGFloat *color2);
 void linearEvaluation (void *info, const CGFloat *in, CGFloat *out)
   {
   CGFloat position = *in;
-  
-  if(*(LQGradientElement **)info == nil)	//if _elementList is empty return clear color
+    
+  LQGradient *grad = (LQGradient *)info;
+  LQGradientElementPtr elemList = [grad _elementListFirstItem];
+    
+  if(elemList == nil)	//if _elementList is empty return clear color
 	{
 	out[0] = out[1] = out[2] = out[3] = 1;
 	return;
 	}
   
   //This grabs the first two colors in the sequence
-  LQGradientElement *color1 = *(LQGradientElement **)info;
+    LQGradientElement *color1 = elemList;
   LQGradientElement *color2 = color1->nextElement;
   
   //make sure first color and second color are on other sides of position
@@ -1142,14 +1162,17 @@ void chromaticEvaluation(void *info, const CGFloat *in, CGFloat *out)
   {
   CGFloat position = *in;
   
-  if(*(LQGradientElement **)info == nil)	//if _elementList is empty return clear color
+  LQGradient *grad = (LQGradient *)info;
+  LQGradientElement *elemList = [grad _elementListFirstItem];
+
+  if(elemList == nil)	//if _elementList is empty return clear color
 	{
 	out[0] = out[1] = out[2] = out[3] = 1;
 	return;
 	}
   
   //This grabs the first two colors in the sequence
-  LQGradientElement *color1 = *(LQGradientElement **)info;
+  LQGradientElement *color1 = elemList;
   LQGradientElement *color2 = color1->nextElement;
   
   CGFloat c1[4];
@@ -1229,15 +1252,18 @@ void chromaticEvaluation(void *info, const CGFloat *in, CGFloat *out)
 void inverseChromaticEvaluation(void *info, const CGFloat *in, CGFloat *out)
   {
     CGFloat position = *in;
-  
-  if(*(LQGradientElement **)info == nil)	//if _elementList is empty return clear color
+
+  LQGradient *grad = (LQGradient *)info;
+  LQGradientElement *elemList = [grad _elementListFirstItem];
+
+  if(elemList == nil)	//if _elementList is empty return clear color
 	{
 	out[0] = out[1] = out[2] = out[3] = 1;
 	return;
 	}
   
   //This grabs the first two colors in the sequence
-  LQGradientElement *color1 = *(LQGradientElement **)info;
+  LQGradientElement *color1 = elemList;
   LQGradientElement *color2 = color1->nextElement;
   
   CGFloat c1[4];
