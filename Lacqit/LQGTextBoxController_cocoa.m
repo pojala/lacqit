@@ -186,7 +186,7 @@
     double y =       ((val = [_styleDict objectForKey:kLQGStyle_MarginTop])) ? [val doubleValue] : 8.0;
     double w = round(defaultW - x - rMargin);
     double labelH = 12.0;
-    NSSize labelSize = NSMakeSize(60, labelH);
+    NSSize labelSize = NSMakeSize(w, labelH);
 
 
     NSRect viewRect = NSMakeRect(0, 0, defaultW, textHeight + (hasLabel ? 26 : 12));
@@ -200,7 +200,7 @@
         NSAttributedString *attrLabel = [[[NSAttributedString alloc] initWithString:[self label] attributes:[self labelAttributes]] autorelease];
         
         NSTextField *nameField = [[NSTextField alloc] initWithFrame:NSMakeRect(x,  y-1.0,
-                                                                               labelSize.width+4.0,  labelH)];
+                                                                               labelSize.width,  labelH)];
         [nameField setEditable:NO];
         [nameField setStringValue:(NSString *)attrLabel];
         [nameField setAlignment:NSLeftTextAlignment];
