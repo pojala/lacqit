@@ -888,8 +888,6 @@ static void releaseCallback(void *info) {
 
     LQGradient *grad = (LQGradient *)info;
     [grad release];
-    
-    NSLog(@"%s", __func__);
 }
 
 
