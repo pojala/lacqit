@@ -565,11 +565,11 @@ static BOOL isOSLeopard()
 - (void)_stopWindowTimer
 {
     if (_windowTimer) {
-            [_windowTimer invalidate];
-            [_windowTimer release];
-            _windowTimer = nil;
-            
-            [self autorelease];  // was retained when the timer was created (fixes a crash bug on Tiger)
+        [_windowTimer invalidate];
+        [_windowTimer release];
+        _windowTimer = nil;
+        
+        [self autorelease];  // was retained when the timer was created (fixes a crash bug on Tiger)
     }
 }
 
@@ -579,7 +579,9 @@ static BOOL isOSLeopard()
     id userInfo = [timer userInfo];
     id val;
     id alphaVal = [userInfo objectForKey:KEY_ALPHAVAL];
-    
+
+    //NSLog(@"%s, %@, %p, %@", __func__, self.name, timer, userInfo);
+
     double maxAlpha = (alphaVal) ? [alphaVal doubleValue] : _maxAlpha;
     
     if ((val = [userInfo objectForKey:KEY_FADEOUTTIME])) {
@@ -587,19 +589,23 @@ static BOOL isOSLeopard()
         double time = LQReferenceTimeGetCurrent();
         double diff = time - _startTime;
         
-        if (diff > tlen && [self isVisible]) {
-            [self close];
+        if (diff > tlen) {
+            if ([self isVisible]) {
+                [self close];
+            }
             [self performSelector:@selector(_stopWindowTimer) withObject:nil afterDelay:0.001];
         }
         else {
-            double pos = diff / tlen;
-            pos = pow(pos, 1.5);
-            double alpha = (1.0 - pos) * maxAlpha;
-            [self setAlphaValue:alpha];
-            
-            if (alpha < 0.001) {
-                if ([_lacefxView respondsToSelector:@selector(setHasWindowSystemDrawable:)])
-                    [_lacefxView setHasWindowSystemDrawable:NO];
+            if ([self isVisible]) {
+                double pos = diff / tlen;
+                pos = pow(pos, 1.5);
+                double alpha = (1.0 - pos) * maxAlpha;
+                [self setAlphaValue:alpha];
+                
+                if (alpha < 0.001) {
+                    if ([_lacefxView respondsToSelector:@selector(setHasWindowSystemDrawable:)])
+                        [_lacefxView setHasWindowSystemDrawable:NO];
+                }
             }
         }
     }
@@ -624,22 +630,31 @@ static BOOL isOSLeopard()
 
         }
     }
+    else {
+        NSLog(@"%s '%@', running without userinfo animation, will stop now", __func__, self.name);
+        [self _stopWindowTimer];
+    }
 }
 
 - (void)_startWindowTimerWithInfo:(id)userInfo
 {
-        _windowTimer = [[NSTimer scheduledTimerWithTimeInterval:(1.0 / 60.0)
-                             target:[self retain]  // <-- retain to prevent a crash bug on Tiger
-                             ///target:self
-                             selector:@selector(windowTimerFired:)
-                             userInfo:userInfo
-                             repeats:YES] retain];
-                             
-        [[NSRunLoop currentRunLoop] addTimer:_windowTimer forMode:NSDefaultRunLoopMode];
-        [[NSRunLoop currentRunLoop] addTimer:_windowTimer forMode:NSEventTrackingRunLoopMode];
-        [[NSRunLoop currentRunLoop] addTimer:_windowTimer forMode:NSModalPanelRunLoopMode];
-        
-        _startTime = LQReferenceTimeGetCurrent();
+    if (_windowTimer) {
+        NSLog(@"** %s, '%@': windowTimer already running", __func__, self.name);
+        return; // --
+    }
+    
+    _windowTimer = [[NSTimer scheduledTimerWithTimeInterval:(1.0 / 60.0)
+                         target:[self retain]  // <-- retain to prevent a crash bug on Tiger
+                         ///target:self
+                         selector:@selector(windowTimerFired:)
+                         userInfo:userInfo
+                         repeats:YES] retain];
+                         
+    [[NSRunLoop currentRunLoop] addTimer:_windowTimer forMode:NSDefaultRunLoopMode];
+    [[NSRunLoop currentRunLoop] addTimer:_windowTimer forMode:NSEventTrackingRunLoopMode];
+    [[NSRunLoop currentRunLoop] addTimer:_windowTimer forMode:NSModalPanelRunLoopMode];
+    
+    _startTime = LQReferenceTimeGetCurrent();
 }
 
 + (double)popUpFadeInTime {
